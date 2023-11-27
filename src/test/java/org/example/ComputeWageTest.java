@@ -28,7 +28,7 @@ class ComputeWageTest {
 
     @Test
     void testException() {
-        ByteArrayInputStream in = new ByteArrayInputStream("John\nregular\nxx\n35\n".getBytes()); //hijack output stream to check whether exception is fired when invald value is entered
+        ByteArrayInputStream in = new ByteArrayInputStream("John\nregular\nxx\n35".getBytes()); //hijack output stream to check whether exception is fired when invald value is entered
         System.setIn(in);
 
         PrintStream myownoutput = System.out;
@@ -36,7 +36,7 @@ class ComputeWageTest {
 
         obj.acceptData();
 
-        assertTrue("You didnt enter a valid number. ".contains(new String(captor.toByteArray())));
+        assertTrue(new String(captor.toByteArray()).contains("You didnt enter a valid number. "));
         System.setOut(myownoutput);
     }
 
@@ -46,6 +46,16 @@ class ComputeWageTest {
 
     @Test
     void display() {
+        obj.acceptData();
+        obj.computeWage();
+
+        PrintStream myownoutput = System.out;
+        ByteArrayOutputStream captor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(captor));
+
+        obj.display();
+
+        assertEquals("The total wage of John is 525.0", captor.toString().trim());
     }
 
     @Test
