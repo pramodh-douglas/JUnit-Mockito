@@ -42,6 +42,9 @@ class ComputeWageTest {
 
     @Test
     void computeWage() {
+        obj.acceptData();
+        obj.computeWage();
+        assertEquals(525, obj.getTotal());
     }
 
     @Test
