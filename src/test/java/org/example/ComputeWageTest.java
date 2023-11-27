@@ -2,21 +2,32 @@ package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 class ComputeWageTest {
 
     ComputeWage obj = new ComputeWage();
+    @Mock
+    BonusInterface bonus_i;
+    @InjectMocks
+    ComputeWage cc;
 
     @BeforeEach
     public void initEach() {
         ByteArrayInputStream in = new ByteArrayInputStream("John\nregular\n35".getBytes()); //hijack input stream to check whether values are accepted
         System.setIn(in);
+
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -63,5 +74,17 @@ class ComputeWageTest {
 
     @Test
     void addBonus() {
+        obj.acceptData();
+        obj.computeWage();
+
+        Mockito.when(bonus_i.bonus(anyString())).thenReturn(2000.0);
+
+        PrintStream myownoutput = System.out;
+        ByteArrayOutputStream captor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(captor));
+
+        obj.addBonus(bonus_i);
+
+        assertEquals("The total wage of John is 2525.0", captor.toString().trim());
     }
 }
